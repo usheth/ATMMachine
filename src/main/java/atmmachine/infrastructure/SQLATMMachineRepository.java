@@ -17,7 +17,7 @@ public class SQLATMMachineRepository implements ATMMachineRepository {
     }
 
     @Override
-    public Session createNewSessionForAccount(Account account) {
+    public Session createNewSessionForCard(Card card) {
         return null;
     }
 

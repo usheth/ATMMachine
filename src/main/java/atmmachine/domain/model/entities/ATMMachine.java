@@ -19,8 +19,7 @@ public class ATMMachine {
             if(!actualPin.doesPinMatch(pin)) {
                 return new AuthenticationResult(false, null);
             }
-            Account account = repository.getAccountByCard(card);
-            Session session = repository.createNewSessionForAccount(account);
+            Session session = repository.createNewSessionForCard(card);
             return new AuthenticationResult(true, session);
         } catch (Exception e) {
             //log exception e

@@ -13,7 +13,7 @@ public interface ATMMachineRepository {
     Account getAccountByCard(Card card);
 
     //initializes a session for the account
-    Session createNewSessionForAccount(Account account);
+    Session createNewSessionForCard(Card card);
 
     //blocks until the calling thread has a write lock on the account
     void getWriteLockOnAccount(Account account);
