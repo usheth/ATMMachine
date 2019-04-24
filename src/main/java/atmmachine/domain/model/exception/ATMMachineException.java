@@ -1,4 +1,4 @@
-package atmmachine.domain.model;
+package atmmachine.domain.model.exception;
 
 public class ATMMachineException extends Exception {
 

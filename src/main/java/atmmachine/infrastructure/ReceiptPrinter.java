@@ -1,6 +1,6 @@
 package atmmachine.infrastructure;
 
-import atmmachine.domain.model.Receipt;
+import atmmachine.domain.model.entities.Receipt;
 
 public class ReceiptPrinter {
 

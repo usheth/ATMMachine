@@ -1,4 +1,4 @@
-package atmmachine.domain.model;
+package atmmachine.domain.model.entities;
 
 public class SavingsAccount implements Account {
 }
