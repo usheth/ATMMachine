@@ -1,10 +1,19 @@
 package atmmachine.infrastructure;
 
-import atmmachine.domain.model.entities.Receipt;
+import atmmachine.domain.model.entities.Session;
 
 public class ReceiptPrinter {
 
-    public void printReceipt(Receipt receipt) {
+    private static ReceiptPrinter instance;
+
+    public static synchronized ReceiptPrinter getInstance() {
+        if(instance == null) {
+            instance = new ReceiptPrinter();
+        }
+        return instance;
+    }
+
+    public void printReceipt(Session session) {
 
     }
 

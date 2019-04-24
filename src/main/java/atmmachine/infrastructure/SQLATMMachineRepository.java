@@ -1,10 +1,8 @@
 package atmmachine.infrastructure;
 
 import atmmachine.domain.model.*;
-import atmmachine.domain.model.entities.Account;
-import atmmachine.domain.model.entities.Card;
-import atmmachine.domain.model.entities.Pin;
-import atmmachine.domain.model.entities.Session;
+import atmmachine.domain.model.entities.*;
+import atmmachine.domain.model.transaction.TransactionResult;
 
 public class SQLATMMachineRepository implements ATMMachineRepository {
 
@@ -19,7 +17,57 @@ public class SQLATMMachineRepository implements ATMMachineRepository {
     }
 
     @Override
-    public Session openSessionForAccount(Account account) {
+    public Session createNewSessionForAccount(Account account) {
+        return null;
+    }
+
+    @Override
+    public void getWriteLockOnAccount(Account account) {
+
+    }
+
+    @Override
+    public void releaseWriteLockOnAccount(Account account) {
+
+    }
+
+    @Override
+    public TransactionResult addMoneyToAccount(Account account, Money money) {
+        return null;
+    }
+
+    @Override
+    public TransactionResult subtractMoneyFromAccount(Account account, Money money) {
+        return null;
+    }
+
+    @Override
+    public TransactionResult subtractAmountFromAccount(Account account, Amount amount) {
+        return null;
+    }
+
+    @Override
+    public boolean isSessionValid(Session session) {
+        return false;
+    }
+
+    @Override
+    public Amount getAccountBalance(Account account) {
+        return null;
+    }
+
+    @Override
+    public void getReadLockOnAccount(Account account) {
+
+    }
+
+    @Override
+    public void releaseReadLockOnAccount(Account account) {
+
+    }
+
+    @Override
+    public TransactionResult closeSession(Session session) {
         return null;
     }
 
