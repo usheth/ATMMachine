@@ -8,7 +8,7 @@ import java.util.List;
 public class Session {
 
     private String type = "Session";
-    //assumes these fields are initialized by the repository when a new session is created
+    //these fields are initialized by the repository when a new session is created
     private String sessionId;
     private Customer customer;
     private Account account;
@@ -19,6 +19,7 @@ public class Session {
         return account;
     }
 
+    //this should be persistent
     public void addTransactionToSession(Transaction transaction) {
         transactionsInThisSession.add(transaction);
     }
