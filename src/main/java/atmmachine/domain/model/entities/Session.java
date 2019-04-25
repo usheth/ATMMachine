@@ -1,6 +1,5 @@
 package atmmachine.domain.model.entities;
 
-import atmmachine.domain.model.entities.Account;
 import atmmachine.domain.model.transaction.Transaction;
 
 import java.util.List;

@@ -1,4 +1,4 @@
 package atmmachine.domain.model.entities;
 
-public class CurrentAccount implements Account {
+public class CurrentAccount extends Account {
 }

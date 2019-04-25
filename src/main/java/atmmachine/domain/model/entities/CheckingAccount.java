@@ -1,4 +1,4 @@
 package atmmachine.domain.model.entities;
 
-public class CheckingAccount implements Account {
+public class CheckingAccount extends Account {
 }

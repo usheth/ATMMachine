@@ -1,7 +1,6 @@
 package atmmachine.domain.model;
 
 import atmmachine.domain.model.entities.*;
-import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
 
 public interface ATMMachineRepository {
