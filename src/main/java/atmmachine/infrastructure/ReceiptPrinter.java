@@ -1,6 +1,8 @@
 package atmmachine.infrastructure;
 
-import atmmachine.domain.model.entities.Session;
+import atmmachine.domain.model.transaction.Transaction;
+
+import java.util.List;
 
 public class ReceiptPrinter {
 
@@ -13,7 +15,7 @@ public class ReceiptPrinter {
         return instance;
     }
 
-    public void printReceipt(Session session) {
+    public void printReceipt(List<Transaction> transactionsInSession) {
 
     }
 

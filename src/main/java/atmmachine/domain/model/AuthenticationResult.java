@@ -1,16 +1,14 @@
 package atmmachine.domain.model;
 
-import atmmachine.domain.model.entities.Session;
-
 public class AuthenticationResult {
 
     private String type = "AuthenticationResult";
     private boolean authenticationStatus;
-    private Session session;
+    private String token;
 
-    public AuthenticationResult(boolean authenticationStatus, Session session) {
+    public AuthenticationResult(boolean authenticationStatus, String token) {
         this.authenticationStatus = authenticationStatus;
-        this.session = session;
+        this.token = token;
     }
 
     public void setAuthenticationSucceeded() {
@@ -21,4 +19,9 @@ public class AuthenticationResult {
         authenticationStatus = false;
     }
 
+    public boolean authenticted() { return authenticationStatus; }
+
+    public String getToken() {
+        return token;
+    }
 }

@@ -2,56 +2,59 @@ package atmmachine.domain.model.entities;
 
 import atmmachine.domain.model.*;
 import atmmachine.domain.model.transaction.DepositAmountTransaction;
+import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
 import atmmachine.domain.model.transaction.WithdrawAmountTransaction;
+import atmmachine.domain.services.AuthenticationService;
+import atmmachine.domain.services.TransactionRecorder;
+import atmmachine.domain.services.TransactionService;
 import atmmachine.infrastructure.CashDispenser;
 import atmmachine.infrastructure.EmailSender;
 import atmmachine.infrastructure.ReceiptPrinter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class ATMMachine {
 
-    //ideally this is autowired
-    private static ATMMachineRepository repository;
+    //ideally these are autowired
+    private AuthenticationService authenticationService;
+    private TransactionService transactionService;
+    private TransactionRecorder transactionRecorder;
 
     public AuthenticationResult verifyCredentials(Card card, Pin pin) {
         try {
-            Pin actualPin = repository.getPinByCard(card);
-            if(!actualPin.doesPinMatch(pin)) {
-                return new AuthenticationResult(false, null);
-            }
-            Session session = repository.createNewSessionForCard(card);
-            return new AuthenticationResult(true, session);
+            AuthenticationResult authenticationResult = authenticationService.authenticate(card, pin);
+            return authenticationResult;
         } catch (Exception e) {
             //log exception e
             return new AuthenticationResult(false, null);
         }
     }
 
-    private boolean isSessionValid(Session session) {
-        return repository.isSessionValid(session);
+    private boolean isTokenValid(Account account, String token) {
+        return authenticationService.isTokenValid(account, token);
     }
 
-    public TransactionResult depositMoney(Session session, Money money) {
-        if(!isSessionValid(session)) {
+    public TransactionResult depositMoney(String token, Account account, Money money) {
+        if(!isTokenValid(account, token)) {
             return new TransactionResult(false);
         }
         try {
-            repository.getWriteLockOnAccount(session.getAccount());
-            TransactionResult result = repository.addMoneyToAccount(session.getAccount(), money);
+            TransactionResult result = transactionService.addMoneyToAccount(account, money);
             if(result.didTransactionSucceed()) {
-                session.addTransactionToSession(new DepositAmountTransaction(money));
+                transactionRecorder.addNewDepositMoneyTransaction(token, money);
             }
             return result;
         } catch (Exception e) {
             //log exception e
             return new TransactionResult(false);
-        } finally {
-            repository.releaseWriteLockOnAccount(session.getAccount());
         }
     }
 
-    private boolean isBalanceSufficientForWithdrawal(Session session, Amount withdrawalAmount) {
-        Amount currentBalance = getAccountBalance(session);
+    private boolean isBalanceSufficientForWithdrawal(Account account, Amount withdrawalAmount) {
+        Amount currentBalance = transactionService.getAccountBalance(account);
         return currentBalance.getAmount() >= withdrawalAmount.getAmount();
     }
 
@@ -60,60 +63,54 @@ public class ATMMachine {
         return cashDispenser.getTotalCashInATM().getAmount() >= withdrawalAmount.getAmount();
     }
 
-    public TransactionResult withdrawMoney(Session session, Amount amount) {
+    public TransactionResult withdrawMoney(String token, Account account, Amount amount) {
         //maybe add validation for the amount (multiple of 10 etc)
-        if(!isSessionValid(session) || !doesATMHaveEnoughCash(amount) || !isBalanceSufficientForWithdrawal(session, amount)) {
+        if(!isTokenValid(account, token) || !doesATMHaveEnoughCash(amount) || !isBalanceSufficientForWithdrawal(account, amount)) {
             //maybe the invalid session case should be handled separately, possible by throwing an exception
             return new TransactionResult(false);
         }
         try {
-            repository.getWriteLockOnAccount(session.getAccount());
-            TransactionResult result = repository.subtractAmountFromAccount(session.getAccount(), amount);
+            TransactionResult result = transactionService.withdrawAmountFromAccount(account, amount);
             if(result.didTransactionSucceed()) {
-                CashDispenser cashDispenser = CashDispenser.getInstance();
-                Money dispensedMoney = cashDispenser.dispenseAmountAndGetDenominations(amount);
-                session.addTransactionToSession(new WithdrawAmountTransaction(dispensedMoney));
+                transactionRecorder.addNewWithdrawAmountTransaction(token, amount);
             }
             return result;
         } catch (Exception e) {
             //log exception e
             return new TransactionResult(false);
-        } finally {
-            repository.releaseWriteLockOnAccount(session.getAccount());
         }
     }
 
-    public Amount getAccountBalance(Session session) {
-        if(!isSessionValid(session)) {
+    public Amount getAccountBalance(String token, Account account) {
+        if(!isTokenValid(account, token)) {
             return null;
         }
         try {
-            repository.getReadLockOnAccount(session.getAccount());
-            return repository.getAccountBalance(session.getAccount());
+            return transactionService.getAccountBalance(account);
         } catch (Exception e) {
             //log exception e
             return null;
-        } finally {
-            repository.releaseReadLockOnAccount(session.getAccount());
         }
     }
 
-    public TransactionResult closeSession(Session session) {
-        if(!isSessionValid(session)) {
-            return new TransactionResult(false);
+    public AuthenticationResult logout(String token, Account account) {
+        if(!isTokenValid(account, token)) {
+            return new AuthenticationResult(false, null);
         }
         try {
-            TransactionResult result = repository.closeSession(session);
-            if(result.didTransactionSucceed()) {
+            AuthenticationResult result = authenticationService.logout(token);
+            if(result.authenticted()) {
+                List<Transaction> transactions = transactionRecorder.getAllTransactionsByToken(token);
                 EmailSender emailSender = EmailSender.getInstance();
-                emailSender.sendEmailForSession(session);
+                emailSender.sendEmailForSession(transactions);
                 ReceiptPrinter receiptPrinter = ReceiptPrinter.getInstance();
-                receiptPrinter.printReceipt(session);
+                receiptPrinter.printReceipt(transactions);
+                transactionRecorder.removeTransactionsForToken(token);
             }
             return result;
         } catch (Exception e) {
             //log exception e
-            return new TransactionResult(false);
+            return new AuthenticationResult(false, null);
         }
     }
 

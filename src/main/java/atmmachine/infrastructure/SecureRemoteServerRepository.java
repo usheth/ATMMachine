@@ -1,11 +1,13 @@
 package atmmachine.infrastructure;
 
-import atmmachine.domain.model.*;
+import atmmachine.domain.model.ATMMachineRepository;
+import atmmachine.domain.model.AuthenticationResult;
 import atmmachine.domain.model.entities.*;
 import atmmachine.domain.model.transaction.TransactionResult;
 
-public class SQLATMMachineRepository implements ATMMachineRepository {
 
+// Make REST API calls here.
+public class SecureRemoteServerRepository implements ATMMachineRepository {
     @Override
     public Pin getPinByCard(Card card) {
         return null;
@@ -17,7 +19,7 @@ public class SQLATMMachineRepository implements ATMMachineRepository {
     }
 
     @Override
-    public Session createNewSessionForCard(Card card) {
+    public Customer getCustomerByCard(Card card) {
         return null;
     }
 
@@ -37,17 +39,12 @@ public class SQLATMMachineRepository implements ATMMachineRepository {
     }
 
     @Override
-    public TransactionResult subtractMoneyFromAccount(Account account, Money money) {
-        return null;
-    }
-
-    @Override
     public TransactionResult subtractAmountFromAccount(Account account, Amount amount) {
         return null;
     }
 
     @Override
-    public boolean isSessionValid(Session session) {
+    public boolean isTokenValid(Account account, String session) {
         return false;
     }
 
@@ -67,7 +64,22 @@ public class SQLATMMachineRepository implements ATMMachineRepository {
     }
 
     @Override
-    public TransactionResult closeSession(Session session) {
+    public boolean authenticateCardFromPin(Card card, Pin pin) {
+        return false;
+    }
+
+    @Override
+    public void handleFailedAuthenticationForCard(Card card) {
+
+    }
+
+    @Override
+    public AuthenticationResult logout(String token) {
+        return null;
+    }
+
+    @Override
+    public String createAccessTokenForCard(Card card) {
         return null;
     }
 

@@ -11,8 +11,8 @@ public interface ATMMachineRepository {
     //gets the account a card belongs to
     Account getAccountByCard(Card card);
 
-    //initializes a session for the account
-    Session createNewSessionForCard(Card card);
+    //gets the customer a card belongs to
+    Customer getCustomerByCard(Card card);
 
     //blocks until the calling thread has a write lock on the account
     void getWriteLockOnAccount(Account account);
@@ -23,14 +23,11 @@ public interface ATMMachineRepository {
     //adds money to the account, internally calls getMoney on the Money object
     TransactionResult addMoneyToAccount(Account account, Money money);
 
-    //subtracts money from the account, internally calls getMoney on the Money object
-    TransactionResult subtractMoneyFromAccount(Account account, Money money);
-
     //subtracts the given amount from the account
     TransactionResult subtractAmountFromAccount(Account account, Amount amount);
 
     //check if the session is correctly registered with our repository, is open, other checks
-    boolean isSessionValid(Session session);
+    boolean isTokenValid(Account account, String token);
 
     //gets the balance in the account
     Amount getAccountBalance(Account account);
@@ -41,6 +38,14 @@ public interface ATMMachineRepository {
     //called by a thread to release a read lock on the account
     void releaseReadLockOnAccount(Account account);
 
-    //closes a previously opened session
-    TransactionResult closeSession(Session session);
+    //authenticates a card given a pin
+    boolean authenticateCardFromPin(Card card, Pin pin);
+
+    //disables a card
+    void handleFailedAuthenticationForCard(Card card);
+
+    AuthenticationResult logout(String token);
+
+    String createAccessTokenForCard(Card card);
+
 }

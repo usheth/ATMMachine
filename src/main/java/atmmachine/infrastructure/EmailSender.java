@@ -1,6 +1,8 @@
 package atmmachine.infrastructure;
 
-import atmmachine.domain.model.entities.Session;
+import atmmachine.domain.model.transaction.Transaction;
+
+import java.util.List;
 
 public class EmailSender {
 
@@ -13,7 +15,7 @@ public class EmailSender {
         return instance;
     }
 
-    public void sendEmailForSession(Session session) {
+    public void sendEmailForSession(List<Transaction> transactionsInSession) {
 
     }
 
