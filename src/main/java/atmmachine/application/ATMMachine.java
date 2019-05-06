@@ -1,35 +1,35 @@
-package atmmachine.domain.model.entities;
+package atmmachine.application;
 
 import atmmachine.domain.model.*;
-import atmmachine.domain.model.transaction.DepositAmountTransaction;
+import atmmachine.domain.model.entities.*;
 import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
-import atmmachine.domain.model.transaction.WithdrawAmountTransaction;
-import atmmachine.domain.services.AuthenticationService;
-import atmmachine.domain.services.TransactionRecorder;
-import atmmachine.domain.services.TransactionService;
 import atmmachine.infrastructure.CashDispenser;
 import atmmachine.infrastructure.EmailSender;
 import atmmachine.infrastructure.ReceiptPrinter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ATMMachine {
 
     //ideally these are autowired
-    private AuthenticationService authenticationService;
+    private atmmachine.domain.model.AuthenticationService authenticationService;
     private TransactionService transactionService;
-    private TransactionRecorder transactionRecorder;
+    private atmmachine.domain.model.TransactionRecorder transactionRecorder;
+
+    public ATMMachine(AuthenticationService authenticationService,
+        atmmachine.domain.model.TransactionService transactionService, TransactionRecorder transactionRecorder) {
+        this.authenticationService = authenticationService;
+        this.transactionRecorder = transactionRecorder;
+        this.transactionService = transactionService;
+    }
 
     public AuthenticationResult verifyCredentials(Card card, Pin pin) {
         try {
-            AuthenticationResult authenticationResult = authenticationService.authenticate(card, pin);
-            return authenticationResult;
+            return authenticationService.authenticate(card, pin);
         } catch (Exception e) {
             //log exception e
-            return new AuthenticationResult(false, null);
+            return new AuthenticationResult(false, e.getMessage());
         }
     }
 
@@ -98,7 +98,7 @@ public class ATMMachine {
             return new AuthenticationResult(false, null);
         }
         try {
-            AuthenticationResult result = authenticationService.logout(token);
+            AuthenticationResult result = authenticationService.invalidateToken(token);
             if(result.authenticted()) {
                 List<Transaction> transactions = transactionRecorder.getAllTransactionsByToken(token);
                 EmailSender emailSender = EmailSender.getInstance();

@@ -1,4 +1,4 @@
-package atmmachine.domain.services;
+package atmmachine.infrastructure;
 
 import atmmachine.domain.model.ATMMachineRepository;
 import atmmachine.domain.model.entities.Account;
@@ -6,10 +6,11 @@ import atmmachine.domain.model.entities.Amount;
 import atmmachine.domain.model.entities.Money;
 import atmmachine.domain.model.transaction.TransactionResult;
 
-public class TransactionService {
+public class DefaultTransactionService implements atmmachine.domain.model.TransactionService {
 
     private ATMMachineRepository repository;
 
+    @Override
     public TransactionResult addMoneyToAccount(Account account, Money money) {
         try {
             repository.getWriteLockOnAccount(account);
@@ -23,6 +24,7 @@ public class TransactionService {
         }
     }
 
+    @Override
     public TransactionResult withdrawAmountFromAccount(Account account, Amount amount) {
         try {
             repository.getWriteLockOnAccount(account);
@@ -36,6 +38,7 @@ public class TransactionService {
         }
     }
 
+    @Override
     public Amount getAccountBalance(Account account) {
         try {
             repository.getReadLockOnAccount(account);
