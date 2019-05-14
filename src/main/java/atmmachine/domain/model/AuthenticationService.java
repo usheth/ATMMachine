@@ -3,6 +3,7 @@ package atmmachine.domain.model;
 import atmmachine.domain.model.entities.Account;
 import atmmachine.domain.model.entities.Card;
 import atmmachine.domain.model.entities.Pin;
+import atmmachine.domain.model.exception.AuthenticationServiceException;
 
 public interface AuthenticationService {
 
@@ -13,7 +14,7 @@ public interface AuthenticationService {
    * @param pin Pin
    * @return {@code AuthenticationResult} Authentication result
    */
-  AuthenticationResult authenticate(Card card, Pin pin);
+  AuthenticationResult authenticate(Card card, Pin pin) throws AuthenticationServiceException;
 
   /**
    * This method checks if a authentication token is valid and matches the account.
