@@ -1,7 +1,9 @@
 package atmmachine.application;
 
+import atmmachine.common.ATMMachineConstants;
 import atmmachine.domain.model.*;
 import atmmachine.domain.model.entities.*;
+import atmmachine.domain.model.exception.TransactionServiceException;
 import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
 import atmmachine.infrastructure.CashDispenser;
@@ -39,7 +41,7 @@ public class ATMMachine {
 
     public TransactionResult depositMoney(String token, Account account, Money money) {
         if(!isTokenValid(account, token)) {
-            return new TransactionResult(false);
+            return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
         }
         try {
             TransactionResult result = transactionService.addMoneyToAccount(account, money);
@@ -49,11 +51,12 @@ public class ATMMachine {
             return result;
         } catch (Exception e) {
             //log exception e
-            return new TransactionResult(false);
+            return new TransactionResult(false, e.getMessage());
         }
     }
 
-    private boolean isBalanceSufficientForWithdrawal(Account account, Amount withdrawalAmount) {
+    private boolean isBalanceSufficientForWithdrawal(Account account, Amount withdrawalAmount)
+        throws TransactionServiceException {
         Amount currentBalance = transactionService.getAccountBalance(account);
         return currentBalance.getAmount() >= withdrawalAmount.getAmount();
     }
@@ -63,11 +66,16 @@ public class ATMMachine {
         return cashDispenser.getTotalCashInATM().getAmount() >= withdrawalAmount.getAmount();
     }
 
-    public TransactionResult withdrawMoney(String token, Account account, Amount amount) {
+    public TransactionResult withdrawMoney(String token, Account account, Amount amount)
+        throws TransactionServiceException {
         //maybe add validation for the amount (multiple of 10 etc)
-        if(!isTokenValid(account, token) || !doesATMHaveEnoughCash(amount) || !isBalanceSufficientForWithdrawal(account, amount)) {
+        if(!isTokenValid(account, token)) {
             //maybe the invalid session case should be handled separately, possible by throwing an exception
-            return new TransactionResult(false);
+            return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
+        } else if(!doesATMHaveEnoughCash(amount)) {
+            return new TransactionResult(false, ATMMachineConstants.INSUFFICIENT_CASH_IN_ATM);
+        } else if(!isBalanceSufficientForWithdrawal(account, amount)) {
+            return new TransactionResult(false, ATMMachineConstants.INSUFFICIENT_BALANCE_IN_ACCOUNT);
         }
         try {
             TransactionResult result = transactionService.withdrawAmountFromAccount(account, amount);
@@ -77,7 +85,7 @@ public class ATMMachine {
             return result;
         } catch (Exception e) {
             //log exception e
-            return new TransactionResult(false);
+            return new TransactionResult(false, e.getMessage());
         }
     }
 

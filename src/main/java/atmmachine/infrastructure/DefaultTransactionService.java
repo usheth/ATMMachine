@@ -18,7 +18,7 @@ public class DefaultTransactionService implements atmmachine.domain.model.Transa
             return result;
         } catch (Exception e) {
             //log exception e
-            return new TransactionResult(false);
+            return new TransactionResult(false, e.getMessage());
         } finally {
             repository.releaseWriteLockOnAccount(account);
         }
@@ -32,7 +32,7 @@ public class DefaultTransactionService implements atmmachine.domain.model.Transa
             return result;
         } catch (Exception e) {
             //log exception e
-            return new TransactionResult(false);
+            return new TransactionResult(false, e.getMessage());
         } finally {
             repository.releaseWriteLockOnAccount(account);
         }
