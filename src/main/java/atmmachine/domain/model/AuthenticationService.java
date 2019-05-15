@@ -23,7 +23,7 @@ public interface AuthenticationService {
    * @param token Token
    * @return {@code boolean} true if the token is valid
    */
-  boolean isTokenValid(Account account, String token);
+  boolean isTokenValid(Account account, String token) throws AuthenticationServiceException;
 
   /**
    * This method invalidates the authentication token associated with an account
@@ -31,5 +31,5 @@ public interface AuthenticationService {
    * @param token Token
    * @return {@code AuthenticationResult} Authentication result
    */
-  AuthenticationResult invalidateToken(String token);
+  AuthenticationResult invalidateToken(String token) throws AuthenticationServiceException;
 }

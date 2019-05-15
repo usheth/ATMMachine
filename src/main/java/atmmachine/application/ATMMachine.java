@@ -3,6 +3,7 @@ package atmmachine.application;
 import atmmachine.common.ATMMachineConstants;
 import atmmachine.domain.model.*;
 import atmmachine.domain.model.entities.*;
+import atmmachine.domain.model.exception.AuthenticationServiceException;
 import atmmachine.domain.model.exception.TransactionServiceException;
 import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
@@ -15,15 +16,18 @@ import java.util.List;
 public class ATMMachine {
 
     //ideally these are autowired
-    private atmmachine.domain.model.AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
     private TransactionService transactionService;
-    private atmmachine.domain.model.TransactionRecorder transactionRecorder;
+    private TransactionRecorder transactionRecorder;
+    private CashDispenser cashDispenser;
 
     public ATMMachine(AuthenticationService authenticationService,
-        atmmachine.domain.model.TransactionService transactionService, TransactionRecorder transactionRecorder) {
+        TransactionService transactionService, TransactionRecorder transactionRecorder,
+        CashDispenser cashDispenser) {
         this.authenticationService = authenticationService;
         this.transactionRecorder = transactionRecorder;
         this.transactionService = transactionService;
+        this.cashDispenser = cashDispenser;
     }
 
     public AuthenticationResult verifyCredentials(Card card, Pin pin) {
@@ -35,11 +39,13 @@ public class ATMMachine {
         }
     }
 
-    private boolean isTokenValid(Account account, String token) {
+    private boolean isTokenValid(Account account, String token)
+        throws AuthenticationServiceException {
         return authenticationService.isTokenValid(account, token);
     }
 
-    public TransactionResult depositMoney(String token, Account account, Money money) {
+    public TransactionResult depositMoney(String token, Account account, Money money)
+        throws AuthenticationServiceException {
         if(!isTokenValid(account, token)) {
             return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
         }
@@ -62,12 +68,11 @@ public class ATMMachine {
     }
 
     private boolean doesATMHaveEnoughCash(Amount withdrawalAmount) {
-        CashDispenser cashDispenser = CashDispenser.getInstance();
         return cashDispenser.getTotalCashInATM().getAmount() >= withdrawalAmount.getAmount();
     }
 
     public TransactionResult withdrawMoney(String token, Account account, Amount amount)
-        throws TransactionServiceException {
+        throws TransactionServiceException, AuthenticationServiceException {
         //maybe add validation for the amount (multiple of 10 etc)
         if(!isTokenValid(account, token)) {
             //maybe the invalid session case should be handled separately, possible by throwing an exception
@@ -89,7 +94,8 @@ public class ATMMachine {
         }
     }
 
-    public Amount getAccountBalance(String token, Account account) {
+    public Amount getAccountBalance(String token, Account account)
+        throws AuthenticationServiceException {
         if(!isTokenValid(account, token)) {
             return null;
         }
@@ -101,9 +107,10 @@ public class ATMMachine {
         }
     }
 
-    public AuthenticationResult logout(String token, Account account) {
+    public AuthenticationResult logout(String token, Account account)
+        throws AuthenticationServiceException {
         if(!isTokenValid(account, token)) {
-            return new AuthenticationResult(false, null);
+            return new AuthenticationResult(false, ATMMachineConstants.INVALID_TOKEN);
         }
         try {
             AuthenticationResult result = authenticationService.invalidateToken(token);
@@ -118,7 +125,7 @@ public class ATMMachine {
             return result;
         } catch (Exception e) {
             //log exception e
-            return new AuthenticationResult(false, null);
+            return new AuthenticationResult(false, e.getMessage());
         }
     }
 
