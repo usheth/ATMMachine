@@ -2,4 +2,5 @@ ext {
     testNgVer = '6.9.10'
     assertjVer = '3.8.0'
     mockitoVer = '1.9.5'
+    jacocoVer = '0.7.9'
 }

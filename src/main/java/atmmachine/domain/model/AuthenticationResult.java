@@ -16,14 +16,6 @@ public class AuthenticationResult {
         }
     }
 
-    public void setAuthenticationSucceeded() {
-        authenticationStatus = true;
-    }
-
-    public void setAuthenticationFailed() {
-        authenticationStatus = false;
-    }
-
     public boolean authenticted() { return authenticationStatus; }
 
     public String getToken() {

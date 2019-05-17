@@ -179,7 +179,8 @@ public class ATMMachineTest {
     // given
     Money someCash = new Cash();
     String token = tokenGenerator();
-    when(authenticationService.isTokenValid(testAccount, token)).thenReturn(true);
+    when(authenticationService.isTokenValid(testAccount, token))
+        .thenReturn(true);
     when(transactionService.addMoneyToAccount(testAccount, someCash))
         .thenThrow(new TransactionServiceException(TRANSACTION_SERVICE_EXCEPTION_MESSAGE));
 
@@ -223,7 +224,8 @@ public class ATMMachineTest {
     // given
     Amount hundredDollars = new Amount(HUNDRED_DOLLARS);
     String invalidToken = tokenGenerator();
-    when(authenticationService.isTokenValid(testAccount, invalidToken)).thenReturn(false);
+    when(authenticationService.isTokenValid(testAccount, invalidToken))
+        .thenReturn(false);
 
     // when
     TransactionResult withdrawAmountResult = atmMachine.withdrawMoney(invalidToken, testAccount, hundredDollars);

@@ -5,6 +5,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.7.1"
+}
+
 apply plugin: 'java'
 group 'ATMMachine'
 version '1.0-SNAPSHOT'
@@ -22,5 +26,75 @@ dependencies {
     testCompile "org.testng:testng:${testNgVer}"
     testCompile "org.assertj:assertj-core:${assertjVer}"
     testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
-
 }
+
+apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "$jacocoVer"
+}
+
+//Jacoco Test report will be generated at location ${buildDir}/jacocoHtml
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/*CustomerMicroserviceApp**'
+            ])
+        })
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+            excludes = ['com.automationanywhere.cognitive.service.customer.*']
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.24
+            }
+        }
+        rule {
+            enabled = true
+            element = 'BUNDLE'
+            excludes = ['com.automationanywhere.cognitive.service.customer.*']
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.11
+            }
+        }
+        rule {
+            enabled = true
+            element = 'METHOD'
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'TOTALCOUNT'
+                maximum = 10
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
+
+test {
+    // enable TestNG support (default is JUnit)
+    useTestNG()
+
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+    finalizedBy jacocoTestReport
+}
+
