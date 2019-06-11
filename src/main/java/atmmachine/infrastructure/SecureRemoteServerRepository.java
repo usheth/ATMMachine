@@ -24,48 +24,48 @@ public class SecureRemoteServerRepository implements ATMMachineRepository {
     }
 
     @Override
-    public void getWriteLockOnAccount(Account account) {
+    public void getWriteLockOnAccount(long accountId) {
 
     }
 
     @Override
-    public void releaseWriteLockOnAccount(Account account) {
+    public void releaseWriteLockOnAccount(long accountId) {
 
     }
 
     @Override
-    public TransactionResult addMoneyToAccount(Account account, Money money) {
+    public void getReadLockOnAccount(long accountId) {
+
+    }
+
+    @Override
+    public void releaseReadLockOnAccount(long accountId) {
+
+    }
+
+    @Override
+    public TransactionResult addMoneyToAccount(long accountId, Money money) {
         return null;
     }
 
     @Override
-    public TransactionResult subtractAmountFromAccount(Account account, Amount amount) {
+    public TransactionResult subtractAmountFromAccount(long accountId, Amount amount) {
         return null;
     }
 
     @Override
-    public boolean isTokenValid(Account account, String session) {
-        return false;
+    public boolean isTokenValid(long accountId, String token) {
+        return Math.random() >= 0.5;
     }
 
     @Override
-    public Amount getAccountBalance(Account account) {
+    public Amount getAccountBalance(long accountId) {
         return null;
-    }
-
-    @Override
-    public void getReadLockOnAccount(Account account) {
-
-    }
-
-    @Override
-    public void releaseReadLockOnAccount(Account account) {
-
     }
 
     @Override
     public boolean authenticateCardFromPin(Card card, Pin pin) {
-        return false;
+        return Math.random() >= 0.5;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SecureRemoteServerRepository implements ATMMachineRepository {
 
     @Override
     public String createAccessTokenForCard(Card card) {
-        return null;
+        return "DummyToken";
     }
 
 }

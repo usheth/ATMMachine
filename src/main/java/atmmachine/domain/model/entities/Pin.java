@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Pin {
 
-    private String type = "Pin";
     private String pin;
 
     public boolean doesPinMatch(Pin pin) {

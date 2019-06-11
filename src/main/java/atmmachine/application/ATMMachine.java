@@ -39,18 +39,18 @@ public class ATMMachine {
         }
     }
 
-    private boolean isTokenValid(Account account, String token)
+    private boolean isTokenValid(long accountId, String token)
         throws AuthenticationServiceException {
-        return authenticationService.isTokenValid(account, token);
+        return authenticationService.isTokenValid(accountId, token);
     }
 
-    public TransactionResult depositMoney(String token, Account account, Money money)
+    public TransactionResult depositMoney(String token, long accountId, Money money)
         throws AuthenticationServiceException {
-        if(!isTokenValid(account, token)) {
+        if(!isTokenValid(accountId, token)) {
             return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
         }
         try {
-            TransactionResult result = transactionService.addMoneyToAccount(account, money);
+            TransactionResult result = transactionService.addMoneyToAccount(accountId, money);
             if(result.didTransactionSucceed()) {
                 transactionRecorder.addNewDepositMoneyTransaction(token, money);
             }
@@ -61,29 +61,29 @@ public class ATMMachine {
         }
     }
 
-    private boolean isBalanceSufficientForWithdrawal(Account account, Amount withdrawalAmount)
+    private boolean isBalanceSufficientForWithdrawal(long accountId, Amount withdrawalAmount)
         throws TransactionServiceException {
-        Amount currentBalance = transactionService.getAccountBalance(account);
-        return currentBalance.getAmount() >= withdrawalAmount.getAmount();
+        Amount currentBalance = transactionService.getAccountBalance(accountId);
+        return currentBalance.getValue() >= withdrawalAmount.getValue();
     }
 
     private boolean doesATMHaveEnoughCash(Amount withdrawalAmount) {
-        return cashDispenser.getTotalCashInATM().getAmount() >= withdrawalAmount.getAmount();
+        return cashDispenser.getTotalCashInATM().getValue() >= withdrawalAmount.getValue();
     }
 
-    public TransactionResult withdrawMoney(String token, Account account, Amount amount)
+    public TransactionResult withdrawMoney(String token, long accountId, Amount amount)
         throws TransactionServiceException, AuthenticationServiceException {
         //maybe add validation for the amount (multiple of 10 etc)
-        if(!isTokenValid(account, token)) {
+        if(!isTokenValid(accountId, token)) {
             //maybe the invalid session case should be handled separately, possible by throwing an exception
             return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
         } else if(!doesATMHaveEnoughCash(amount)) {
             return new TransactionResult(false, ATMMachineConstants.INSUFFICIENT_CASH_IN_ATM);
-        } else if(!isBalanceSufficientForWithdrawal(account, amount)) {
+        } else if(!isBalanceSufficientForWithdrawal(accountId, amount)) {
             return new TransactionResult(false, ATMMachineConstants.INSUFFICIENT_BALANCE_IN_ACCOUNT);
         }
         try {
-            TransactionResult result = transactionService.withdrawAmountFromAccount(account, amount);
+            TransactionResult result = transactionService.withdrawAmountFromAccount(accountId, amount);
             if(result.didTransactionSucceed()) {
                 transactionRecorder.addNewWithdrawAmountTransaction(token, amount);
             }
@@ -94,22 +94,22 @@ public class ATMMachine {
         }
     }
 
-    public Amount getAccountBalance(String token, Account account)
+    public Amount getAccountBalance(String token, long accountId)
         throws AuthenticationServiceException {
-        if(!isTokenValid(account, token)) {
+        if(!isTokenValid(accountId, token)) {
             return null;
         }
         try {
-            return transactionService.getAccountBalance(account);
+            return transactionService.getAccountBalance(accountId);
         } catch (Exception e) {
             //log exception e
             return null;
         }
     }
 
-    public AuthenticationResult logout(String token, Account account)
+    public AuthenticationResult logout(String token, long accountId)
         throws AuthenticationServiceException {
-        if(!isTokenValid(account, token)) {
+        if(!isTokenValid(accountId, token)) {
             return new AuthenticationResult(false, ATMMachineConstants.INVALID_TOKEN);
         }
         try {

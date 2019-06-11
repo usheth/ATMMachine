@@ -2,13 +2,13 @@ package atmmachine.domain.model.entities;
 
 public class Amount {
 
-    private double amount;
+    private double value;
 
-    public Amount(double amount) {
-        this.amount = amount;
+    public Amount(double value) {
+        this.value = value;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getValue() {
+        return value;
     }
 }

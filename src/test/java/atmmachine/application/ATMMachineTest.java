@@ -12,7 +12,6 @@ import atmmachine.domain.model.TransactionService;
 import atmmachine.domain.model.entities.Account;
 import atmmachine.domain.model.entities.Amount;
 import atmmachine.domain.model.entities.Card;
-import atmmachine.domain.model.entities.CardType;
 import atmmachine.domain.model.entities.Cash;
 import atmmachine.domain.model.entities.Customer;
 import atmmachine.domain.model.entities.Money;
@@ -33,7 +32,7 @@ import java.util.UUID;
 public class ATMMachineTest {
 
   private ATMMachine atmMachine;
-  private Account testAccount;
+  private long testAccount;
   private Customer testCustomer;
   @Mock private AuthenticationService authenticationService;
   @Mock private TransactionService transactionService;
@@ -54,7 +53,7 @@ public class ATMMachineTest {
     MockitoAnnotations.initMocks(this);
     atmMachine = new ATMMachine(authenticationService, transactionService,
         transactionRecorder, cashDispenser);
-    testAccount = new SavingsAccount();
+    testAccount = 1L;
     testCustomer = new Customer();
   }
 
@@ -64,7 +63,7 @@ public class ATMMachineTest {
     String token = tokenGenerator();
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenReturn(new AuthenticationResult(true, token));
-    Card card = new Card(CardType.MASTER_CARD, "123", new Customer());
+    Card card = new Card();
     Pin pin = new Pin();
 
     // when
@@ -84,7 +83,7 @@ public class ATMMachineTest {
     // given
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenReturn(new AuthenticationResult(false, INVALID_CREDENTIALS));
-    Card card = new Card(CardType.MASTER_CARD, "123", new Customer());
+    Card card = new Card();
     Pin pin = new Pin();
 
     // when
@@ -103,7 +102,7 @@ public class ATMMachineTest {
     // given
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenThrow(new AuthenticationServiceException(AUTHENTICATION_SERVICE_EXCEPTION_MESSAGE));
-    Card card = new Card(CardType.MASTER_CARD, "123", new Customer());
+    Card card = new Card();
     Pin pin = new Pin();
 
     // when
@@ -371,7 +370,7 @@ public class ATMMachineTest {
 
     // then
     assertThat(amount).isNotNull();
-    assertThat(amount.getAmount()).isEqualTo(HUNDRED_DOLLARS);
+    assertThat(amount.getValue()).isEqualTo(HUNDRED_DOLLARS);
   }
 
   @Test

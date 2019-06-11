@@ -8,9 +8,9 @@ import atmmachine.domain.model.transaction.TransactionResult;
 
 public interface TransactionService {
 
-  TransactionResult addMoneyToAccount(Account account, Money money) throws TransactionServiceException;
+  TransactionResult addMoneyToAccount(long accountId, Money money) throws TransactionServiceException;
 
-  TransactionResult withdrawAmountFromAccount(Account account, Amount amount) throws TransactionServiceException;
+  TransactionResult withdrawAmountFromAccount(long accountId, Amount amount) throws TransactionServiceException;
 
-  Amount getAccountBalance(Account account) throws TransactionServiceException;
+  Amount getAccountBalance(long accountId) throws TransactionServiceException;
 }

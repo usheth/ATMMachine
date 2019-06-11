@@ -23,7 +23,7 @@ public interface AuthenticationService {
    * @param token Token
    * @return {@code boolean} true if the token is valid
    */
-  boolean isTokenValid(Account account, String token) throws AuthenticationServiceException;
+  boolean isTokenValid(long accountId, String token) throws AuthenticationServiceException;
 
   /**
    * This method invalidates the authentication token associated with an account

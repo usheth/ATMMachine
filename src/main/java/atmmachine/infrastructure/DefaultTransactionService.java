@@ -11,43 +11,43 @@ public class DefaultTransactionService implements atmmachine.domain.model.Transa
     private ATMMachineRepository repository;
 
     @Override
-    public TransactionResult addMoneyToAccount(Account account, Money money) {
+    public TransactionResult addMoneyToAccount(long accountId, Money money) {
         try {
-            repository.getWriteLockOnAccount(account);
-            TransactionResult result = repository.addMoneyToAccount(account, money);
+            repository.getWriteLockOnAccount(accountId);
+            TransactionResult result = repository.addMoneyToAccount(accountId, money);
             return result;
         } catch (Exception e) {
             //log exception e
             return new TransactionResult(false, e.getMessage());
         } finally {
-            repository.releaseWriteLockOnAccount(account);
+            repository.releaseWriteLockOnAccount(accountId);
         }
     }
 
     @Override
-    public TransactionResult withdrawAmountFromAccount(Account account, Amount amount) {
+    public TransactionResult withdrawAmountFromAccount(long accountId, Amount amount) {
         try {
-            repository.getWriteLockOnAccount(account);
-            TransactionResult result = repository.subtractAmountFromAccount(account, amount);
+            repository.getWriteLockOnAccount(accountId);
+            TransactionResult result = repository.subtractAmountFromAccount(accountId, amount);
             return result;
         } catch (Exception e) {
             //log exception e
             return new TransactionResult(false, e.getMessage());
         } finally {
-            repository.releaseWriteLockOnAccount(account);
+            repository.releaseWriteLockOnAccount(accountId);
         }
     }
 
     @Override
-    public Amount getAccountBalance(Account account) {
+    public Amount getAccountBalance(long accountId) {
         try {
-            repository.getReadLockOnAccount(account);
-            return repository.getAccountBalance(account);
+            repository.getReadLockOnAccount(accountId);
+            return repository.getAccountBalance(accountId);
         } catch (Exception e) {
             //log exception e
             return null;
         } finally {
-            repository.releaseReadLockOnAccount(account);
+            repository.releaseReadLockOnAccount(accountId);
         }
     }
 
