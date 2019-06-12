@@ -12,5 +12,5 @@ public interface TransactionService {
 
   TransactionResult withdrawAmountFromAccount(long accountId, Amount amount) throws TransactionServiceException;
 
-  Amount getAccountBalance(long accountId) throws TransactionServiceException;
+  TransactionResult getAccountBalance(long accountId) throws TransactionServiceException;
 }

@@ -39,10 +39,11 @@ public class DefaultTransactionService implements atmmachine.domain.model.Transa
     }
 
     @Override
-    public Amount getAccountBalance(long accountId) {
+    public TransactionResult getAccountBalance(long accountId) {
         try {
             repository.getReadLockOnAccount(accountId);
-            return repository.getAccountBalance(accountId);
+            Amount accountBalance = repository.getAccountBalance(accountId);
+            return new TransactionResult(true, Double.toString(accountBalance.getValue()));
         } catch (Exception e) {
             //log exception e
             return null;

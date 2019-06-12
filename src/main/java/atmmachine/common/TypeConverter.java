@@ -10,4 +10,13 @@ public class TypeConverter {
     }
   }
 
+  public static Double stringToDouble(String num) {
+    try {
+      return Double.parseDouble(num);
+    } catch (final Exception e) {
+      return null;
+    }
+  }
+
+
 }

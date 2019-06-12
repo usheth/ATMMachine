@@ -19,6 +19,7 @@ import atmmachine.domain.model.entities.Pin;
 import atmmachine.domain.model.entities.SavingsAccount;
 import atmmachine.domain.model.exception.AuthenticationServiceException;
 import atmmachine.domain.model.exception.TransactionServiceException;
+import atmmachine.domain.model.transaction.Transaction;
 import atmmachine.domain.model.transaction.TransactionResult;
 import atmmachine.infrastructure.CashDispenser;
 import java.util.ArrayList;
@@ -204,7 +205,7 @@ public class ATMMachineTest {
     when(cashDispenser.getTotalCashInATM())
         .thenReturn(new Amount(THOUSAND_DOLLARS));
     when(transactionService.getAccountBalance(testAccount))
-        .thenReturn(new Amount(THOUSAND_DOLLARS));
+        .thenReturn(new TransactionResult(true, Double.toString(THOUSAND_DOLLARS)));
     when(transactionService.withdrawAmountFromAccount(testAccount, hundredDollars))
         .thenReturn(new TransactionResult(true, WITHDRAW_SUCCEEDED));
 
@@ -266,7 +267,7 @@ public class ATMMachineTest {
     when(cashDispenser.getTotalCashInATM())
         .thenReturn(new Amount(THOUSAND_DOLLARS));
     when(transactionService.getAccountBalance(testAccount))
-        .thenReturn(new Amount(HUNDRED_DOLLARS));
+        .thenReturn(new TransactionResult(true, Double.toString(HUNDRED_DOLLARS)));
 
     // when
     TransactionResult withdrawTransactionResult = atmMachine.withdrawMoney(token, testAccount, hundredDollars);
@@ -288,7 +289,7 @@ public class ATMMachineTest {
     when(cashDispenser.getTotalCashInATM())
         .thenReturn(new Amount(THOUSAND_DOLLARS));
     when(transactionService.getAccountBalance(testAccount))
-        .thenReturn(new Amount(THOUSAND_DOLLARS));
+        .thenReturn(new TransactionResult(true, Double.toString(HUNDRED_DOLLARS)));
     when(transactionService.withdrawAmountFromAccount(testAccount, hundredDollars))
         .thenReturn(new TransactionResult(false, WITHDRAW_FAILED));
 
@@ -312,7 +313,7 @@ public class ATMMachineTest {
     when(cashDispenser.getTotalCashInATM())
         .thenReturn(new Amount(THOUSAND_DOLLARS));
     when(transactionService.getAccountBalance(testAccount))
-        .thenReturn(new Amount(THOUSAND_DOLLARS));
+        .thenReturn(new TransactionResult(true, Double.toString(THOUSAND_DOLLARS)));
     when(transactionService.withdrawAmountFromAccount(testAccount, hundredDollars))
         .thenThrow(new TransactionServiceException(TRANSACTION_SERVICE_EXCEPTION_MESSAGE));
 
@@ -334,10 +335,12 @@ public class ATMMachineTest {
         .thenReturn(false);
 
     // when
-    Amount amount = atmMachine.getAccountBalance(invalidToken, testAccount);
+    TransactionResult transactionResult = atmMachine.getAccountBalance(invalidToken, testAccount);
 
     // then
-    assertThat(amount).isNull();
+    assertThat(transactionResult).isNotNull();
+    assertThat(transactionResult.didTransactionSucceed()).isFalse();
+    assertThat(transactionResult.getMessage()).isEqualTo(ATMMachineConstants.INVALID_TOKEN);
   }
 
   @Test
@@ -350,10 +353,12 @@ public class ATMMachineTest {
         .thenThrow(new TransactionServiceException(TRANSACTION_SERVICE_EXCEPTION_MESSAGE));
 
     // when
-    Amount amount = atmMachine.getAccountBalance(token, testAccount);
+    TransactionResult transactionResult = atmMachine.getAccountBalance(token, testAccount);
 
     // then
-    assertThat(amount).isNull();
+    assertThat(transactionResult).isNotNull();
+    assertThat(transactionResult.didTransactionSucceed()).isFalse();
+    assertThat(transactionResult.getMessage()).isEqualTo(TRANSACTION_SERVICE_EXCEPTION_MESSAGE);
   }
 
   @Test
@@ -363,14 +368,14 @@ public class ATMMachineTest {
     when(authenticationService.isTokenValid(testAccount, token))
         .thenReturn(true);
     when(transactionService.getAccountBalance(testAccount))
-        .thenReturn(new Amount(HUNDRED_DOLLARS));
+        .thenReturn(new TransactionResult(true, Double.toString(HUNDRED_DOLLARS)));
 
     // when
-    Amount amount = atmMachine.getAccountBalance(token, testAccount);
+    TransactionResult transactionResult = atmMachine.getAccountBalance(token, testAccount);
 
     // then
-    assertThat(amount).isNotNull();
-    assertThat(amount.getValue()).isEqualTo(HUNDRED_DOLLARS);
+    assertThat(transactionResult).isNotNull();
+    assertThat(transactionResult.getMessage()).isEqualTo(Double.toString(HUNDRED_DOLLARS));
   }
 
   @Test
