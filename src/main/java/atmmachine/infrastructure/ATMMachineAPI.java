@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,13 +29,13 @@ public class ATMMachineAPI {
   ATMMachine atmMachine;
 
   @GetMapping
-  @RequestMapping("/hello")
+  @RequestMapping(value = "/hello", method = RequestMethod.GET)
   public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
     return "Hello, " + name;
   }
 
   @PostMapping
-  @RequestMapping("/authenticate")
+  @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
   public ResponseEntity authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
     AuthenticationResult authenticationResult = atmMachine
         .verifyCredentials(authenticationRequest.getCard(), authenticationRequest.getPin());
@@ -45,7 +46,7 @@ public class ATMMachineAPI {
   }
 
   @PutMapping
-  @RequestMapping("/deposit")
+  @RequestMapping(value = "/deposit", method = RequestMethod.PUT)
   public ResponseEntity deposit(@RequestParam(value = "token", defaultValue = "World") String token,
       @RequestParam(value = "accountId", defaultValue = "1") String accountId,
       @RequestBody Money money) {
@@ -63,7 +64,7 @@ public class ATMMachineAPI {
   }
 
   @PutMapping
-  @RequestMapping("/withdraw")
+  @RequestMapping(value = "/withdraw", method = RequestMethod.PUT)
   public ResponseEntity withdraw(
       @RequestParam(value = "token", defaultValue = "World") String token,
       @RequestParam(value = "accountId", defaultValue = "1") String accountId,
@@ -82,7 +83,7 @@ public class ATMMachineAPI {
   }
 
   @GetMapping
-  @RequestMapping("/balance")
+  @RequestMapping(value = "/balance", method = RequestMethod.GET)
   public ResponseEntity getBalance(
       @RequestParam(value = "token", defaultValue = "World") String token,
       @RequestParam(value = "accountId", defaultValue = "1") String accountId) {
@@ -95,7 +96,7 @@ public class ATMMachineAPI {
   }
 
   @PostMapping
-  @RequestMapping("/logout")
+  @RequestMapping(value = "/logout", method = RequestMethod.POST)
   public ResponseEntity logout(
       @RequestParam(value = "token", defaultValue = "World") String token,
       @RequestParam(value = "accountId", defaultValue = "1") String accountId) {
