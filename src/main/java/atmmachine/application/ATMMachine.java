@@ -99,12 +99,11 @@ public class ATMMachine {
     }
   }
 
-  public TransactionResult getAccountBalance(String token, long accountId)
-      throws AuthenticationServiceException {
-    if (!isTokenValid(accountId, token)) {
-      return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
-    }
+  public TransactionResult getAccountBalance(String token, long accountId) {
     try {
+      if (!isTokenValid(accountId, token)) {
+        return new TransactionResult(false, ATMMachineConstants.INVALID_TOKEN);
+      }
       return transactionService.getAccountBalance(accountId);
     } catch (Exception e) {
       //log exception e
@@ -112,12 +111,11 @@ public class ATMMachine {
     }
   }
 
-  public AuthenticationResult logout(String token, long accountId)
-      throws AuthenticationServiceException {
-    if (!isTokenValid(accountId, token)) {
-      return new AuthenticationResult(false, ATMMachineConstants.INVALID_TOKEN);
-    }
+  public AuthenticationResult logout(String token, long accountId) {
     try {
+      if (!isTokenValid(accountId, token)) {
+        return new AuthenticationResult(false, ATMMachineConstants.INVALID_TOKEN);
+      }
       AuthenticationResult result = authenticationService.invalidateToken(token);
       if (result.authenticted()) {
         List<Transaction> transactions = transactionRecorder.getAllTransactionsByToken(token);

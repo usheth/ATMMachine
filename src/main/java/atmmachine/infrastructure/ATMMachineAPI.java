@@ -90,12 +90,8 @@ public class ATMMachineAPI {
     if (accountIdLong == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-    try {
-      return ResponseEntity.status(HttpStatus.OK)
-          .body(atmMachine.getAccountBalance(token, accountIdLong));
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(atmMachine.getAccountBalance(token, accountIdLong));
   }
 
   @PostMapping
@@ -107,12 +103,8 @@ public class ATMMachineAPI {
     if (accountIdLong == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-    try {
-      return ResponseEntity.status(HttpStatus.OK)
-          .body(atmMachine.logout(token, accountIdLong));
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(atmMachine.logout(token, accountIdLong));
   }
 
 }
