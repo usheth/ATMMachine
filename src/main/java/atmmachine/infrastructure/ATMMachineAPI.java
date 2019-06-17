@@ -27,9 +27,11 @@ public class ATMMachineAPI {
 
   private static final String DEFAULT_TOKEN_VALUE = "";
   private static final String DEFAULT_ACCOUNT_ID_VALUE = "-1";
+  private static final String ACCOUNT_ID_PARAM = "accountId";
+  private static final String TOKEN_PARAM = "token";
 
   @Autowired
-  ATMMachine atmMachine;
+  private ATMMachine atmMachine;
 
   @GetMapping
   @RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -51,8 +53,8 @@ public class ATMMachineAPI {
   @PutMapping
   @RequestMapping(value = "/deposit", method = RequestMethod.PUT)
   public ResponseEntity deposit(
-      @RequestParam(value = "token", defaultValue = DEFAULT_TOKEN_VALUE) String token,
-      @RequestParam(value = "accountId", defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId,
+      @RequestParam(value = TOKEN_PARAM, defaultValue = DEFAULT_TOKEN_VALUE) String token,
+      @RequestParam(value = ACCOUNT_ID_PARAM, defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId,
       @RequestBody Money money) {
     Long accountIdLong = TypeConverter.stringToLong(accountId);
     if (accountIdLong == null) {
@@ -70,8 +72,8 @@ public class ATMMachineAPI {
   @PutMapping
   @RequestMapping(value = "/withdraw", method = RequestMethod.PUT)
   public ResponseEntity withdraw(
-      @RequestParam(value = "token", defaultValue = DEFAULT_TOKEN_VALUE) String token,
-      @RequestParam(value = "accountId", defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId,
+      @RequestParam(value = TOKEN_PARAM, defaultValue = DEFAULT_TOKEN_VALUE) String token,
+      @RequestParam(value = ACCOUNT_ID_PARAM, defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId,
       @RequestBody Amount amount) {
     Long accountIdLong = TypeConverter.stringToLong(accountId);
     if (accountIdLong == null) {
@@ -89,8 +91,8 @@ public class ATMMachineAPI {
   @GetMapping
   @RequestMapping(value = "/balance", method = RequestMethod.GET)
   public ResponseEntity getBalance(
-      @RequestParam(value = "token", defaultValue = DEFAULT_TOKEN_VALUE) String token,
-      @RequestParam(value = "accountId", defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId) {
+      @RequestParam(value = TOKEN_PARAM, defaultValue = DEFAULT_TOKEN_VALUE) String token,
+      @RequestParam(value = ACCOUNT_ID_PARAM, defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId) {
     Long accountIdLong = TypeConverter.stringToLong(accountId);
     if (accountIdLong == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -102,8 +104,8 @@ public class ATMMachineAPI {
   @PostMapping
   @RequestMapping(value = "/logout", method = RequestMethod.POST)
   public ResponseEntity logout(
-      @RequestParam(value = "token", defaultValue = DEFAULT_TOKEN_VALUE) String token,
-      @RequestParam(value = "accountId", defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId) {
+      @RequestParam(value = TOKEN_PARAM, defaultValue = DEFAULT_TOKEN_VALUE) String token,
+      @RequestParam(value = ACCOUNT_ID_PARAM, defaultValue = DEFAULT_ACCOUNT_ID_VALUE) String accountId) {
     Long accountIdLong = TypeConverter.stringToLong(accountId);
     if (accountIdLong == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
