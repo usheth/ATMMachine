@@ -5,7 +5,7 @@ import atmmachine.infrastructure.CashDispenser;
 import atmmachine.infrastructure.DefaultAuthenticationService;
 import atmmachine.infrastructure.DefaultTransactionRecorder;
 import atmmachine.infrastructure.DefaultTransactionService;
-import atmmachine.infrastructure.SecureRemoteServerRepository;
+import atmmachine.infrastructure.LocalSQLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +54,7 @@ public class AtmMachineRestConfiguration {
 
   @Bean
   ATMMachineRepository getAtmMachineRepository() {
-    return new SecureRemoteServerRepository();
+    return new LocalSQLRepository();
   }
 
 }

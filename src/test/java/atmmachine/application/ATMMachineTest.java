@@ -48,6 +48,7 @@ public class ATMMachineTest {
   private static final double THOUSAND_DOLLARS = 1000;
   private static final String WITHDRAW_SUCCEEDED = "";
   private static final String WITHDRAW_FAILED = "";
+  private static final String CARD_NO = "";
 
   @BeforeMethod
   public void before() {
@@ -64,7 +65,7 @@ public class ATMMachineTest {
     String token = tokenGenerator();
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenReturn(new AuthenticationResult(true, token));
-    Card card = new Card();
+    Card card = new Card(CARD_NO);
     Pin pin = new Pin();
 
     // when
@@ -84,7 +85,7 @@ public class ATMMachineTest {
     // given
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenReturn(new AuthenticationResult(false, INVALID_CREDENTIALS));
-    Card card = new Card();
+    Card card = new Card(CARD_NO);
     Pin pin = new Pin();
 
     // when
@@ -103,7 +104,7 @@ public class ATMMachineTest {
     // given
     when(authenticationService.authenticate(any(Card.class), any(Pin.class)))
         .thenThrow(new AuthenticationServiceException(AUTHENTICATION_SERVICE_EXCEPTION_MESSAGE));
-    Card card = new Card();
+    Card card = new Card(CARD_NO);
     Pin pin = new Pin();
 
     // when
