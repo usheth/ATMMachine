@@ -9,6 +9,7 @@ import atmmachine.domain.model.entities.Customer;
 import atmmachine.domain.model.entities.Money;
 import atmmachine.domain.model.entities.Pin;
 import atmmachine.domain.model.transaction.TransactionResult;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -76,7 +77,9 @@ public class LocalSQLRepository implements ATMMachineRepository {
 
   @Override
   public boolean authenticateCardFromPin(Card card, Pin pin) {
-    return false;
+    Session session = sessionFactory.getCurrentSession();
+    Card dbCard = session.get(Card.class, card.getCardNumber());
+    return dbCard != null && pin.doesPinMatch(new Pin(dbCard.getPin()));
   }
 
   @Override

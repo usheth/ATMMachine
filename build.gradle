@@ -42,6 +42,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-jdbc', version: '5.1.8.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '5.1.8.RELEASE'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.47'
+    compile group: 'javax.enterprise', name: 'cdi-api', version: '2.0'
 }
 
 apply plugin: 'jacoco'

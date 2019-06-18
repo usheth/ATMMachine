@@ -40,6 +40,7 @@ public class ATMMachine {
     try {
       return authenticationService.authenticate(card, pin);
     } catch (Exception e) {
+      e.printStackTrace();
       //log exception e
       return new AuthenticationResult(false, e.getMessage());
     }
